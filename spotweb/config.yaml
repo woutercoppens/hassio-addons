@@ -5,7 +5,7 @@ arch:
   - armv7
   - i386
 name: Spotweb
-version: 0.0.1
+version: dev
 slug: spotweb_docker
 description: Spotweb is a decentralized usenet community based on the Spotnet protocol.
 url: https://github.com/woutercoppens/hassio-addons/spotweb
@@ -19,7 +19,6 @@ map:
   - config
   - ssl
 options:
-  plugins: []
   env_vars: []
   ssl: true
   certfile: fullchain.pem
@@ -38,4 +37,7 @@ schema:
   certfile: str
   keyfile: str
   ssl: bool
-  env_vars:
+  env_vars: [
+    name: str
+    value: str
+  ]
