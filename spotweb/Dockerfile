@@ -48,11 +48,10 @@ RUN apk -U update && \
         mariadb-client \
     && \
     && mkdir -p /app \
-    git clone --depth=1 https://github.com/spotweb/spotweb.git /app && \    # Install latest Spotweb release
+    && git clone --depth=1 https://github.com/spotweb/spotweb.git /app \    # Install latest Spotweb release
     # spotweb needs a timezone set in the php.ini
     # TODO: Can we dynamically set the correct timezone here ?
     && sed -i "s/;date.timezone =/date.timezone = \"Europe\/Amsterdam\"/g" /etc/php7/php.ini \
-    \
     && rm -fr \
         /tmp/* \
         /var/{cache,log}/* \
