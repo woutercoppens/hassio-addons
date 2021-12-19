@@ -19,8 +19,7 @@ ARG BUILD_ARCH=amd64
 RUN apk -U update && \
     apk -U upgrade && \
     apk -U add --no-cache \
-        tar \
-        wget \
+        git \
         nginx \
         php8 \
         php8-fpm \
