@@ -19,7 +19,6 @@ map:
   - config
   - ssl
 options:
-  env_vars: []
   ssl: true
   certfile: fullchain.pem
   keyfile: privkey.pem
@@ -37,7 +36,3 @@ schema:
   certfile: str
   keyfile: str
   ssl: bool
-  env_vars: [
-    name: str
-    value: str
-  ]
