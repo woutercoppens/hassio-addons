@@ -6,20 +6,20 @@ arch:
   - i386
 name: Spotweb
 version: dev
-slug: spotweb_docker
+slug: spotweb
 description: Spotweb is a decentralized usenet community based on the Spotnet protocol.
 url: https://github.com/woutercoppens/hassio-addons/spotweb
+init: false
 startup: services
 ingress: true
 ingress_port: 8999
 ingress_stream: true
 panel_icon: mdi:chart-timeline
-panel_title: Spotweb  
+panel_title: Spotweb
 map:
-  - config
   - ssl
 options:
-  ssl: true
+  ssl: false
   certfile: fullchain.pem
   keyfile: privkey.pem
 ports:
@@ -27,11 +27,11 @@ ports:
 ports_description:
   80/tcp: Not required for Ingress
 schema:
-  remote_mysql_host: str
-  remote_mysql_database: str
-  remote_mysql_username: str
-  remote_mysql_password: password
-  remote_mysql_port: int
+  remote_mysql_host: str?
+  remote_mysql_database: str?
+  remote_mysql_username: str?
+  remote_mysql_password: password?
+  remote_mysql_port: int?
   log_level: list(trace|debug|info|notice|warning|error|fatal)?
   certfile: str
   keyfile: str

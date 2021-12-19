@@ -1,0 +1,2 @@
+/app/cache true nginx:nginx 0644 0755
+/var/tmp/nginx true nginx:root 0644 0755
