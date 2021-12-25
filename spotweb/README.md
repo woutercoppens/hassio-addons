@@ -18,11 +18,11 @@ Spotweb is one of the most-featured Spotnet clients currently available, featuri
 
 ## Installation
 
-Note: This addon requires a mysql database. Make sure you have the MariaDB addon running.
+Note: This addon requires a mysql database. Make sure you have the MariaDB addon running of use a remote MySQL server.
 A database and user will be auto created if the MariaDB addon is detected.
 
 1. [Add my Hass.io add-ons repository][repository] to your Hass.io instance.
-1. Make sure that the MariaDB addon is installed.
+1. Make sure that the MariaDB addon is installed or use a remote MySQL server.
 1. Install the Spotweb add-on.
 1. Click the `Save` button to store your configuration.
 1. Start the  add-on.

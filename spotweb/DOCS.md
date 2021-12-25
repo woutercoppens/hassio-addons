@@ -1,18 +1,20 @@
 # Home Assistant Community Add-on: Bookstack
 
-BookStack is a simple, self-hosted, easy-to-use platform for organising and
-storing information. Please support the developers of this software at
-[Bookstack].
+[Spotweb][spotweb] is a decentralized usenet community based on the [Spotnet][spotnet] protocol. Please support the developers of this software at
+[spotweb].
 
 ## Installation
 
 The installation of this add-on is pretty straightforward and not different in
 comparison to installing any other Home Assistant add-on.
 
-1. Search for the "bookstack" add-on in the add-on store and install it.
-1. Start the "bookstack" add-on
-1. Check the logs of the "bookstack" add-on to see if everything went well.
-1. Default login information is admin@admin.com/password.
+1. [Add my Hass.io add-ons repository][repository] to your Hass.io instance.
+1. Make sure that the MariaDB addon is installed or use a remote MySQL server.
+1. Install the Spotweb add-on.
+1. Click the `Save` button to store your configuration.
+1. Start the  add-on.
+1. Check the logs of the add-on to see if everything went well.
+1. Carefully configure the add-on to your preferences, see the official documentation for for that.
 
 ## Configuration
 
@@ -89,7 +91,7 @@ server is listening on.
 
 ## Database usage
 
-By default, Bookstack will automatically use and configure the Home Assistant
+By default, spotweb will automatically use and configure the Home Assistant
 MariaDB addon which should be installed prior to startup, this can be changed
 within the configuration to use an external MySql/MariaDB Database. Please note
 that there is no easy upgrade path between the two options.
@@ -155,13 +157,14 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 
-[bookstack]: https://www.bookstackapp.com/
-[contributors]: https://github.com/hassio-addons/addon-bookstack/graphs/contributors
+[spotnet]: https://github.com/spotnet/spotnet/wiki
+[spotweb]: https://github.com/spotweb/spotweb
+[contributors]: https://github.com/woutercoppens/spotweb/graphs/contributors
 [discord-ha]: https://discord.gg/c5DvZ4e
 [discord]: https://discord.me/hassioaddons
 [forum]: https://community.home-assistant.io/t/community-hass-io-xxxxx/xxxxx
 [woutercoppens]: https://github.com/woutercoppens
-[issue]: https://github.com/hassio-addons/addon-bookstack/issues
+[issue]: https://github.com/woutercoppens/hassio-addons/issues
 [reddit]: https://reddit.com/r/homeassistant
-[releases]: https://github.com/hassio-addons/addon-bookstack/releases
+[releases]: https://github.com/woutercoppens/hassio-addons/releases
 [semver]: http://semver.org/spec/v2.0.0
