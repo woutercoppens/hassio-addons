@@ -10,14 +10,14 @@ slug: spotweb
 description: Spotweb is a decentralized usenet community based on the Spotnet protocol.
 url: https://github.com/woutercoppens/hassio-addons/spotweb
 init: false
-startup: services
 ingress: true
-ingress_port: 8999
-ingress_stream: true
+ingress_port: 8099
 panel_icon: mdi:chart-timeline
 panel_title: Spotweb
 map:
   - ssl
+  - config:rw
+  - backup:rw
 options:
   ssl: false
   certfile: fullchain.pem
@@ -36,3 +36,8 @@ schema:
   certfile: str
   keyfile: str
   ssl: bool
+services: 
+  - mysql:want
+startup: services
+# webui: [PROTO:ssl]://[HOST]:[PORT:80]
+hassio_api: true

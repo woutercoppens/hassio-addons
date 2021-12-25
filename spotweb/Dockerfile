@@ -13,8 +13,8 @@ ENV SPOTWEB_RELEASE="1.5.1"
 # Set shell
 SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 
-# Setup base system
-ARG BUILD_ARCH=amd64
+# Setup base
+# hadolint ignore=DL3003
 # Install app dependencies
 RUN apk -U update && \
     apk -U upgrade && \
@@ -51,15 +51,7 @@ RUN apk -U update && \
     && git clone --depth=1 https://github.com/spotweb/spotweb.git /app \
     # spotweb needs a timezone set in the php.ini
     # TODO: Can we dynamically set the correct timezone here ?
-    && sed -i "s/;date.timezone =/date.timezone = \"Europe\/Amsterdam\"/g" /etc/php8/php.ini \
-    && rm -fr \
-        /tmp/* \
-        /var/{cache,log}/* \
-        /var/lib/apt/lists/* \
-        /etc/nginx \
-    \
-    && mkdir -p /var/log/nginx \
-    && touch /var/log/nginx/error.log
+    && sed -i "s/;date.timezone =/date.timezone = \"Europe\/Amsterdam\"/g" /etc/php8/php.ini
 
 # Copy rootfs
 COPY rootfs /

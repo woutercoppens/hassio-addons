@@ -8,111 +8,102 @@ declare host
 declare username
 declare password
 declare port
+declare dbname
 
-if ! bashio::fs.directory_exists "/config/.spotweb/"; then
-    bashio::log "Creating spotweb directory"
-    mkdir -p /config/.spotweb
-    chown nginx:nginx /config/.spotweb
-fi
 
-if ! bashio::fs.file_exists "/config/.spotweb/dbsettings.inc.php"; then
-  #Addon has never been configured before, so configure it 
-  if bashio::config.has_value 'remote_mysql_host'; then
-    if ! bashio::config.has_value 'remote_mysql_database'; then
-      bashio::exit.nok \
-        "Remote database has been specified but no database is configured"
-    fi
-
-    if ! bashio::config.has_value 'remote_mysql_username'; then
-      bashio::exit.nok \
-        "Remote database has been specified but no username is configured"
-    fi
-
-    if ! bashio::config.has_value 'remote_mysql_password'; then
-      bashio::log.fatal \
-        "Remote database has been specified but no password is configured"
-    fi
-
-    if ! bashio::config.exists 'remote_mysql_port'; then
-      bashio::exit.nok \
-        "Remote database has been specified but no port is configured"
-    fi
-  else
-    # Require MySQL service to be available
-    if ! bashio::services.available mysql; then
-      bashio::log.fatal \
-        "Local database access should be provided by the MariaDB addon"
-      bashio::exit.nok \
-        "Please ensure it is installed and started"
-    fi
-
-    host=$(bashio::services mysql "host")
-    password=$(bashio::services mysql "password")
-    port=$(bashio::services mysql "port")
-    username=$(bashio::services mysql "username")
-
-    bashio::log.warning "Spotweb is using the Maria DB addon"
-    bashio::log.warning "Please ensure this is included in your backups"
-    bashio::log.warning "Uninstalling the MariaDB addon will remove any data"
-
-    # bashio::log.info "Creating database for spotweb if required"
-    # mysql \
-    #   -u "${username}" -p"${password}" \
-    #   -h "${host}" -P "${port}" \
-    #   -e "CREATE DATABASE IF NOT EXISTS \`spotweb\` ;"
+if bashio::config.has_value 'remote_mysql_host'; then
+  if ! bashio::config.has_value 'remote_mysql_database'; then
+    bashio::exit.nok \
+      "Remote database has been specified but no database is configured"
   fi
 
-  # write db config file for spotweb
-  {
-    echo "<?php"
-    echo "\$dbsettings['engine'] = "pdo_mysql";"
-    echo "\$dbsettings['host'] = "${host}:${port}";"
-    echo "\$dbsettings['dbname'] = "spotweb";"
-    echo "\$dbsettings['user'] = "${username}";"
-    echo "\$dbsettings['pass'] = "${password}";"
-  } >> /config/.spotweb/dbsettings.inc.php
+  if ! bashio::config.has_value 'remote_mysql_username'; then
+    bashio::exit.nok \
+      "Remote database has been specified but no username is configured"
+  fi
 
-  # write config file for mysql client
-  {
-    echo "[client]"
-    echo "host=${host}"
-    echo "password=\"${password}\""
-    echo "port=${port}"
-    echo "user=\"${username}\""
-  } > /config/.spotweb/mylogin.cnf
+  if ! bashio::config.has_value 'remote_mysql_password'; then
+    bashio::log.fatal \
+      "Remote database has been specified but no password is configured"
+  fi
+
+  if ! bashio::config.exists 'remote_mysql_port'; then
+    bashio::exit.nok \
+      "Remote database has been specified but no port is configured"
+  fi
+
+  host=$(bashio::config "remote_mysql_host")
+  password=$(bashio::config "remote_mysql_password")
+  port=$(bashio::config "remote_mysql_port")
+  username=$(bashio::config "remote_mysql_username")
+  dbname=$(bashio::config "remote_mysql_database")
 
 else
-  bashio::log.info "Files /config/.spotweb/dbsettings.inc.php and "
-  bashio::log.info "/config/.spotweb/mylogin.cnf exists."
-  bashio::log.info "So we're ignoring the settings in the addon. If you want"
-  bashio::log.info "start over, remove the files first."
+  # Require MySQL service to be available
+  if ! bashio::services.available mysql; then
+    bashio::log.fatal \
+      "Local database access should be provided by the MariaDB addon"
+    bashio::exit.nok \
+      "Please ensure it is installed and started"
+  fi
+
+  dbname="spotweb"
+  host=$(bashio::services mysql "host")
+  port=$(bashio::services mysql "port")
+  username=$(bashio::services mysql "username")
+  password=$(bashio::services mysql "password")
+  # password='spotweb'
+  # username='spotweb'
+  
+  bashio::log.warning "Spotweb is using the Maria DB addon"
+  bashio::log.warning "Please ensure this is included in your backups"
+  bashio::log.warning "Uninstalling the MariaDB addon will remove any data"
+
 fi
 
-ln -s /config/.spotweb/dbsettings.inc.php /app/dbsettings.inc.php
-ln -s /config/.spotweb/mylogin.cnf ~/.mylogin.cnf
+# write db config file for spotweb
+{
+  echo "<?php"
+  echo "\$dbsettings['engine'] = 'pdo_mysql';"
+  echo "\$dbsettings['host'] = '${host}';"
+  echo "\$dbsettings['dbname'] = '${dbname}';"
+  echo "\$dbsettings['user'] = '${username}';"
+  echo "\$dbsettings['pass'] = '${password}';"
+  echo "\$dbsettings['port'] = '${port}';"
+} > /app/dbsettings.inc.php
+
+
+# cat /app/dbsettings.inc.php
+
+# wait for mysql server to be available
+until nc -z -v -w30 $host $port
+do
+    bashio::log.info "Waiting for database connection at host '${host}:${port}'..."
+    sleep 2
+done
 
  # Check if database already exists
-# RESULT=`mysql -u "${username}" -p"${password}" -h "${host}" -P "${port}" --skip-column-names -e "SHOW DATABASES LIKE 'spotweb'"`
-RESULT=`mysql --skip-column-names -e "SHOW DATABASES LIKE 'spotweb'"`
-if [ "$RESULT" == "$mysql_db" ]; then
+RESULT=`mysql -u "${username}" -p"${password}" -h "${host}" -P "${port}" --skip-column-names -e "SHOW DATABASES LIKE '${dbname}'"`
+if [ "$RESULT" == "$dbname" ]; then
     # database already exists, do healthcheck with upgrade-db
-    php /app/bin/upgrade-db.php>/dev/null
+    bashio::log.info "Existing database, checking health with upgrade-db...."
+    /usr/bin/php8 /app/bin/upgrade-db.php>/dev/null
 else
     # database does not yet exist
     bashio::log.info "Creating database with default settings...."
     mysql \
-        # -u "${mysql_user}" -p"${mysql_pass}" \
-        # -h "${mysql_host}" -P "${mysql_port}" \
-        -e "CREATE DATABASE spotweb;"
+        -u "${mysql_user}" -p"${mysql_pass}" \
+        -h "${mysql_host}" -P "${mysql_port}" \
+        -e "CREATE DATABASE ${dbname};"
     # init database with default values
-    php /app/bin/upgrade-db.php
+    /usr/bin/php8 /app/bin/upgrade-db.php
     # set systemtype to public (as we're behind ingress)
-    php /app/bin/upgrade-db.php --set-systemtype public
+    /usr/bin/php8 /app/bin/upgrade-db.php --set-systemtype public
     # we also set some sane default settings
     mysql \
-        # -u "${mysql_user}" -p"${mysql_pass}" \
-        # -h "${mysql_host}" -P "${mysql_port}" \
-        -D "spotweb" \
+        -u "${mysql_user}" -p"${mysql_pass}" \
+        -h "${mysql_host}" -P "${mysql_port}" \
+        -D "${dbname}" \
         -e "REPLACE INTO usergroups(userid, groupid) VALUES (1, 2); \
             REPLACE INTO usergroups(userid, groupid) VALUES (1, 3); \
             REPLACE INTO usergroups(userid, groupid) VALUES (1, 4); \

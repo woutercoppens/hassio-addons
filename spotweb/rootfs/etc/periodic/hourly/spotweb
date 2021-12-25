@@ -3,4 +3,4 @@
 # Runs the hourly task to update spots
 # ==============================================================================
 
-php /app/retrieve.php
+/usr/bin/php8 /app/retrieve.php
