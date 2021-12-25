@@ -92,8 +92,8 @@ else
     # database does not yet exist
     bashio::log.info "Creating database with default settings...."
     mysql \
-        -u "${mysql_user}" -p"${mysql_pass}" \
-        -h "${mysql_host}" -P "${mysql_port}" \
+        -u "${username}" -p"${password}" \
+        -h "${host}" -P "${port}" \
         -e "CREATE DATABASE ${dbname};"
     # init database with default values
     /usr/bin/php8 /app/bin/upgrade-db.php
@@ -101,8 +101,8 @@ else
     /usr/bin/php8 /app/bin/upgrade-db.php --set-systemtype public
     # we also set some sane default settings
     mysql \
-        -u "${mysql_user}" -p"${mysql_pass}" \
-        -h "${mysql_host}" -P "${mysql_port}" \
+        -u "${username}" -p"${password}" \
+        -h "${host}" -P "${port}" \
         -D "${dbname}" \
         -e "REPLACE INTO usergroups(userid, groupid) VALUES (1, 2); \
             REPLACE INTO usergroups(userid, groupid) VALUES (1, 3); \
