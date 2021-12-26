@@ -1,2 +1,3 @@
-/app/cache true nginx:nginx 0644 0755
-/var/tmp/nginx true nginx:root 0644 0755
+/app/cache true abc:abc 0644 0755
+/var/tmp/nginx true abc:abc 0644 0755
+/var/lib/nginx true abc:abc 0644 0755
