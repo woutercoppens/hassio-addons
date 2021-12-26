@@ -2,5 +2,10 @@
 
 bashio::log.info "Starting PHP-FPM..."
 
+<<<<<<< HEAD
 #/usr/sbin/php-fpm8 -F
 exec php-fpm8 --nodaemonize
+=======
+# /usr/sbin/php-fpm8 -F
+exec php-fpm8 --nodaemonize
+>>>>>>> 5880be956adcf89f26ae1ea551d2122f5e5e2cac
