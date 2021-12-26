@@ -3,4 +3,4 @@
 # Runs the hourly task to update spots
 # ==============================================================================
 
-s6-setuidgid abc php8 /app/retrieve.php
+s6-setuidgid nginx php8 /app/retrieve.php

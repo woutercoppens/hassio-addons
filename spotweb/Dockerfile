@@ -58,10 +58,6 @@ RUN apk -U update && \
 # Copy rootfs
 COPY rootfs /
 
-# create default user / group and folders
-RUN groupadd -g 1000 abc && \
-    useradd -u 1000 -g abc -d /app -s /bin/false abc
-    
 # Build arguments
 ARG BUILD_ARCH
 ARG BUILD_DATE
